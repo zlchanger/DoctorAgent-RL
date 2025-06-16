@@ -1,6 +1,6 @@
 # DoctorAgent-RL 🚀: Multi-Agent Collaborative Reinforcement Learning for Clinical Dialogue
 
-[![Research](https://img.shields.io/badge/Stage-Research-brightgreen)](https://en.wikipedia.org/wiki/Research) [![Dataset](https://img.shields.io/badge/Dataset-MTMedDialog-orange)](DATASET.md) [![arXiv](https://img.shields.io/badge/arXiv-2505.19630-b31b1b.svg)](https://arxiv.org/pdf/2505.19630)
+[![Dataset](https://img.shields.io/badge/Dataset-MTMedDialog-orange)](DATASET.md) [![arXiv](https://img.shields.io/badge/arXiv-2505.19630-b31b1b.svg)](https://arxiv.org/pdf/2505.19630)
 
 <div align="center">
   <img src="Figures/Performance_Comp_1.png" alt="System Architecture" width="600">
@@ -18,7 +18,7 @@
 
 ## News
 
-* **[2025.6.16]** We released the source code in GitHub and Models in Huggingface!
+* **[2025.6.16]** We released the source code in [GitHub](https://github.com/JarvisUSTC/DoctorAgent-RL) and Models in [Huggingface](https://huggingface.co/collections/Jarvis1111/doctoragent-rl-684ffbcade52305ba0e3e97f)!
 * **[2025.5.26]** We released our [paper](https://arxiv.org/pdf/2505.19630) in Arxiv!
 
 ## Introduction
@@ -130,6 +130,8 @@ For **Reinforcement Learning (RL)** training, we utilize the `train_en_8068_all_
 
 ```bash
 # Example:
+# Dynamic Turns + SFT Cold Start
+bash scripts_exp/doctor-agent-rl-dynamic.sh
 # Reward Model + Dynamic Turns + SFT Cold Start
 bash scripts_exp/doctor-agent-rl-rm-dynamic.sh
 # Reward Model + SFT Cold Start
