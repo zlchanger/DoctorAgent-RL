@@ -18,8 +18,8 @@ project_name=RAGEN
 
 python -m ragen.trainer.main_ppo \
   hydra.run.dir=outputs/exp_configs/logs/$(date +%Y-%m-%d)/$(date +%H-%M-%S) \
-  data.train_files=data/train_en_8068_all_format_filter_7k_rl_reward_w_des.parquet \
-  data.val_files=data/train_en_8068_all_format_filter_7k_rl_reward_w_des.parquet \
+  data.train_files=data/MTMedDialog_RL.parquet \
+  data.val_files=data/MTMedDialog_RL.parquet \
   data.train_data_num=null \
   data.val_data_num=64 \
   data.train_batch_size=128 \

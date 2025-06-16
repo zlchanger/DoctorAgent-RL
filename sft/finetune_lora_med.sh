@@ -12,8 +12,8 @@ fi
 shift 2
 torchrun --standalone --nnodes=1 --nproc_per_node=$nproc_per_node \
      -m ragen.trainer.fsdp_sft_trainer \
-    data.train_files=data/train_en_8068_all_format_filter_994_sft_w_thinking.parquet \
-    data.val_files=data/val_en_8068_all_format_filter_100_sft_w_thinking.parquet \
+    data.train_files=data/MTMedDialog_sft_train.parquet \
+    data.val_files=data/MTMedDialog_sft_val.parquet \
     data.prompt_key=prompt \
     data.response_key=response \
     data.max_length=6784 \

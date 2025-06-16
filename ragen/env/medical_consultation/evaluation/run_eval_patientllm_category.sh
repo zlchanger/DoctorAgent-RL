@@ -19,7 +19,7 @@ OUTPUT_PREFIX=${2:-test_en_output_multi_gpu_patientllm_iter}
 for MAX_ITERATIONS in 10; do
     OUTPUT_PREFIX_ITER="${OUTPUT_PREFIX}_${MAX_ITERATIONS}"
     # 设置输入和输出文件路径
-    INPUT_FILE="data/MTMedDialog.json"
+    INPUT_FILE="data/MTMedDialog_test.json"
     OUTPUT_DIR="$MODEL_PATH/"
 
     # 设置批处理大小和其他参数
@@ -54,7 +54,7 @@ for MAX_ITERATIONS in 10; do
 
     # 设置输入输出路径
     SIMULATION_DATA="$OUTPUT_DIR/$OUTPUT_PREFIX_ITER.json"
-    REFERENCE_DATA="data/MTMedDialog.json"
+    REFERENCE_DATA="data/MTMedDialog_test.json"
     OUTPUT_FILE="$MODEL_PATH/eval_scores_patientllm_category_iter$MAX_ITERATIONS.json"
 
     # 设置批处理大小和其他参数
