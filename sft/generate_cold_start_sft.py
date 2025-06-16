@@ -102,8 +102,8 @@ def process_all_cases(input_path, output_path, start_index=0, max_workers=4):
 
 if __name__ == "__main__":
     process_all_cases(
-        input_path="medical_consultation/train_en_8068_all_format_filter_4k_sft_diagnosis.parquet",
-        output_path="medical_consultation/train_en_8068_all_format_filter_4k_sft_w_thinking_1k.parquet",
+        input_path="data/train_en_8068_all_format_filter_4k_sft_diagnosis.parquet",
+        output_path="data/train_en_8068_all_format_filter_4k_sft_w_thinking_1k.parquet",
         start_index=0,
         max_workers=4
     )

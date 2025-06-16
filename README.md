@@ -18,7 +18,7 @@
 
 ## News
 
-* **[2025.6.16]** We released the complete source code in GitHub!
+* **[2025.6.16]** We released the source code in GitHub and Models in Huggingface!
 * **[2025.5.26]** We released our [paper](https://arxiv.org/pdf/2505.19630) in Arxiv!
 
 ## Introduction
@@ -57,8 +57,6 @@ The reinforcement learning process involves:
 2.  Dynamic reward calculation based on real-time consultation quality and objectives.
 3.  Policy updates using advanced reinforcement learning algorithms, such as Group Relative Policy Optimization (GRPO).
 4.  Continuous strategy refinement through iterative interactions, driving agents towards optimal diagnostic and communication strategies.
-
----
 
 ## Experiments
 
@@ -116,7 +114,7 @@ bash scripts/setup_ragen.sh
 ### 3. Download the neccessary models
 
 - [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/tree/main)
-- [DoctorLLM-7B-SFT-1000-thinking](https://huggingface.co/Jarvis1111/DoctorAgent-RL-SFT-1k-Thinking)
+- [DoctorLLM-7B-SFT-1000-thinking](https://huggingface.co/Jarvis1111/DoctorAgent-RL-SFT-1k-Thinking) (Our SFT Model)
 
 ## Experiment Scripts
 
@@ -140,9 +138,11 @@ bash scripts_exp/doctor-agent-rl-rm.sh
 bash doctor-agent-rl-dynamic-wo-sft.sh
 ```
 
+For SFT cold start, you can use the "sft/finetune_lora_med.sh" or [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory).
+
 ### 3. Run Evaluation
 
-The evaluation scripts and data are located in the `ragen/env/medical_consultation/evaluation/` directory.
+The evaluation scripts are located in the `ragen/env/medical_consultation/evaluation/` directory.
 
 ```bash
 # Example:
