@@ -159,4 +159,15 @@ bash ragen/env/medical_consultation/evaluation/run_eval_patientllm_category_api.
 
 For more detailed command-line arguments and configuration options, please refer to the individual script files that will be released with the code.
 
+## Citation
 
+If DoctorAgent-RL contributes to your research, please consider citing our work:
+
+```latex
+@article{feng2025doctoragent,
+  title={DoctorAgent-RL: A Multi-Agent Collaborative Reinforcement Learning System for Multi-Turn Clinical Dialogue},
+  author={Feng, Yichun and Wang, Jiawei and Zhou, Lu and Li, Yixue},
+  journal={arXiv preprint arXiv:2505.19630},
+  year={2025}
+}
+```
