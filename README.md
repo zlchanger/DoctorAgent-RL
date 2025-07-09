@@ -103,7 +103,7 @@ To set up your environment and run DoctorAgent-RL, follow these steps:
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your_repo_link/DoctorAgent-RL.git](https://github.com/your_repo_link/DoctorAgent-RL.git) # Replace with actual repo link
+git clone https://github.com/JarvisUSTC/DoctorAgent-RL.git
 cd DoctorAgent-RL
 ```
 
