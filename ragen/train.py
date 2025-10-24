@@ -5,6 +5,7 @@ import json
 from typing import Dict, Any
 import time
 
+
 def deep_update(base_dict: Dict[str, Any], update_dict: Dict[str, Any], noassert_keys=["env", ""]) -> Dict[str, Any]:
     """Recursively update a dictionary."""
     assert isinstance(base_dict, dict) and isinstance(update_dict, dict)
@@ -17,12 +18,13 @@ def deep_update(base_dict: Dict[str, Any], update_dict: Dict[str, Any], noassert
             base_dict[key] = value
     return base_dict
 
+
 def load_config(env_name: str) -> Dict[str, Any]:
     """Load configuration from base and environment-specific configs."""
     # Load base config
     with open("config/base.yaml", 'r') as f:
         config = yaml.safe_load(f)
-    #print("config1",config)
+    # print("config1",config)
     # Load environment config
     env_config_path = f"config/env/{env_name}.yaml"
     if os.path.exists(env_config_path):
@@ -31,8 +33,9 @@ def load_config(env_name: str) -> Dict[str, Any]:
             config = deep_update(config, env_config)
     else:
         raise ValueError(f"Environment config not found: {env_config_path}")
-    
+
     return config
+
 
 def get_train_command(config: Dict[str, Any]) -> str:
     """Generate the training command with all arguments."""
@@ -43,19 +46,20 @@ def get_train_command(config: Dict[str, Any]) -> str:
     else:
         return get_sft_train_command(config)
 
+
 def get_rl_train_command(config: Dict[str, Any]) -> str:
     """Generate the RL training command with all arguments."""
     # Calculate MAX_PROMPT_LENGTH
     max_prompt_length = (config['training']['max_start_length'] +
-                        config['training']['max_response_length'] * (config['training']['max_turns'] - 1) +
-                        config['training']['max_obs_length'] * config['training']['max_turns'])
-   
+                         config['training']['max_response_length'] * (config['training']['max_turns'] - 1) +
+                         config['training']['max_obs_length'] * config['training']['max_turns'])
+
     # Define the command template with proper indentation
     env_kwargs = config['env']['env_kwargs']
     env_kwargs_str = " \\\n    ".join([
         f"+env.{key}={value}" if value is not None else f"+env.{key}=null" for key, value in env_kwargs.items()
     ])
-    
+
     # Add env_llm configuration
     env_llm_config = config['env'].get('env_llm', {})
     env_llm_str = ""
@@ -69,7 +73,7 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
                     f"env.env_llm.fsdp_config.{key}={value}" for key, value in fsdp_params.items()
                 ])
                 env_llm_str += " \\\n    "
-        
+
         # vLLM config
         vllm_config = env_llm_config.get('vllm_config', {})
         if vllm_config:
@@ -77,7 +81,7 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
                 f"env.env_llm.vllm_config.{key}={value}" for key, value in vllm_config.items()
             ])
             env_llm_str += " \\\n    "
-        
+
         # Model config
         model_config = env_llm_config.get('model', {})
         if model_config:
@@ -87,7 +91,7 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
                     f"env.env_llm.model.{key}={value}" for key, value in model_params.items()
                 ])
             env_llm_str += " \\\n    "
-        
+
         # Generation config
         generation_config = env_llm_config.get('generation', {})
         if generation_config:
@@ -95,16 +99,16 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
                 f"env.env_llm.generation.{key}={value}" for key, value in generation_config.items()
             ])
             env_llm_str += " \\\n    "
-        
+
         # Other env_llm configs
-        other_configs = {k: v for k, v in env_llm_config.items() 
-                        if k not in ['fsdp_config', 'vllm_config', 'model', 'generation']}
+        other_configs = {k: v for k, v in env_llm_config.items()
+                         if k not in ['fsdp_config', 'vllm_config', 'model', 'generation']}
         if other_configs:
             env_llm_str += " \\\n    ".join([
                 f"env.env_llm.{key}={value}" for key, value in other_configs.items()
             ])
             env_llm_str += " \\\n    "
-    
+
     cmd = [
         f"VLLM_ATTENTION_BACKEND={config['system']['vllm_attention_backend']}",
         f"CUDA_VISIBLE_DEVICES={config['system']['cuda_visible_devices']}",
@@ -127,7 +131,8 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
         f"actor_rollout_ref.actor.optim.lr={config['optimization']['actor_lr']}",
         f"actor_rollout_ref.actor.use_kl_loss={config['optimization']['use_kl_loss']}",
         f"actor_rollout_ref.actor.ppo_mini_batch_size={config['training']['ppo_batch_size']}",
-        f"actor_rollout_ref.actor.ppo_micro_batch_size={config['training']['micro_batch_size']}", # NOTE: This is deprecated, use ppo_micro_batch_size_per_gpu instead
+        f"actor_rollout_ref.actor.ppo_micro_batch_size={config['training']['micro_batch_size']}",
+        # NOTE: This is deprecated, use ppo_micro_batch_size_per_gpu instead
         f"actor_rollout_ref.rollout.tensor_model_parallel_size={config['training']['rollout_tp_size']}",
         f"actor_rollout_ref.rollout.gpu_memory_utilization={config['optimization']['gpu_memory_utilization']}",
         f"actor_rollout_ref.actor.ppo_micro_batch_size={config['training']['micro_batch_size']}",
@@ -144,7 +149,8 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
         f"algorithm.kl_ctrl.kl_coef={config['optimization']['kl_coef']}",
         f"+algorithm.no_ref_policy={config['optimization']['no_ref_policy']}",
         f"+actor_rollout_ref.actor.use_ref_policy={not config['optimization']['no_ref_policy']}",
-        f"actor_rollout_ref.actor.kl_loss_coef={config['optimization']['kl_coef']}", # for use_kl_loss=True. ARPO/BRPO/GRPO needs the original model with "low_var_kl"
+        f"actor_rollout_ref.actor.kl_loss_coef={config['optimization']['kl_coef']}",
+        # for use_kl_loss=True. ARPO/BRPO/GRPO needs the original model with "low_var_kl"
         f"actor_rollout_ref.actor.kl_loss_type={config['optimization']['kl_type']}",
         f"+algorithm.no_think_rl={config['training']['no_think_rl']}",
         f"+algorithm.reward_norm_type={config['optimization']['reward_norm_type'] or 'null'}",
@@ -177,10 +183,11 @@ def get_rl_train_command(config: Dict[str, Any]) -> str:
         f"logging.log_n_image_per_batch={config['logging']['log_n_image_per_batch']}",
         "2>&1"
     ]
-   
+
     return " \\\n    ".join(cmd)
 
-def get_sft_train_command(config: Dict[str, Any],config_dir="./outputs/exp_configs/sft") -> str:
+
+def get_sft_train_command(config: Dict[str, Any], config_dir="./outputs/exp_configs/sft") -> str:
     """
     Generate the SFT training command by saving the config to a temporary YAML file
     and using it for the SFT pipeline.
@@ -192,26 +199,27 @@ def get_sft_train_command(config: Dict[str, Any],config_dir="./outputs/exp_confi
         str: The complete command string for running SFT training
     """
     # Create sft_configs directory if it doesn't exist
-    
+
     os.makedirs(config_dir, exist_ok=True)
     # Generate unique filename using process ID and timestamp
     pid = os.getpid()
     timestamp = int(time.time())
     config_hash = f"{pid}_{timestamp}"
     config_path = os.path.join(config_dir, f"sft_config_{config_hash}.yaml")
-    
+
     # Save config to YAML file
     with open(config_path, "w") as f:
         yaml.safe_dump(config, f)
-    
+
     # Generate command using the temporary config file
     cmd = [
         "python -m sft.sft_pipeline",
         f"--config {config_path}",
         f"--env_type {config['env']['name']}"
     ]
-    
+
     return " \\\n    ".join(cmd)
+
 
 def parse_override_args(args_list):
     """Parse override arguments in the format key=value."""
@@ -224,7 +232,7 @@ def parse_override_args(args_list):
                 value = value.lower() == 'true'
             elif value.replace('.', '').isdigit():
                 value = float(value) if '.' in value else int(value)
-            
+
             # Handle nested keys
             current = overrides
             key_parts = key.split('.')
@@ -235,21 +243,22 @@ def parse_override_args(args_list):
             current[key_parts[-1]] = value
     return overrides
 
+
 def main():
     parser = argparse.ArgumentParser(description='Generate training command with config')
     parser.add_argument('env_name', nargs='?', default='sokoban', help='Environment name')
     parser.add_argument('overrides', nargs='*', help='Config overrides in the format key=value')
-    
+
     args = parser.parse_args()
-    
+
     # Load base config
     config = load_config(args.env_name)
-    
+
     # Apply command line overrides
     if args.overrides:
         overrides = parse_override_args(args.overrides)
         config = deep_update(config, overrides)
-    
+
     import subprocess
     print("Running command:")
     print(get_train_command(config))
